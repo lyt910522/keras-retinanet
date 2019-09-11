@@ -68,6 +68,12 @@ def create_generator(args):
             config=args.config,
             shuffle_groups=False,
         )
+    elif args.dataset_type == 'pascal_part':
+        validation_generator = PascalVocGenerator(
+            args.pascal_path,
+            ['person_test', 'cat_test', 'chair_test', 'dog_test', 'sofa_test'],
+            shuffle_groups=False,
+        )
     elif args.dataset_type == 'csv':
         validation_generator = CSVGenerator(
             args.annotations,
@@ -95,6 +101,9 @@ def parse_args(args):
 
     pascal_parser = subparsers.add_parser('pascal')
     pascal_parser.add_argument('pascal_path', help='Path to dataset directory (ie. /tmp/VOCdevkit).')
+
+    pascal_part_parser = subparsers.add_parser('pascal_part')
+    pascal_part_parser.add_argument('pascal_path', help='Path to dataset directory (ie. /tmp/VOCdevkit).')
 
     csv_parser = subparsers.add_parser('csv')
     csv_parser.add_argument('annotations', help='Path to CSV file containing annotations for evaluation.')

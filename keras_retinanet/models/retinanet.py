@@ -19,6 +19,7 @@ from .. import initializers
 from .. import layers
 from ..utils.anchors import AnchorParameters
 from . import assert_training_model
+import pdb
 
 
 def default_classification_model(
@@ -29,7 +30,7 @@ def default_classification_model(
     classification_feature_size=256,
     name='classification_submodel'
 ):
-    """ Creates the default regression submodel.
+    """ Creates the default classification submodel.
 
     Args
         num_classes                 : Number of classes to predict a score for at each feature level.

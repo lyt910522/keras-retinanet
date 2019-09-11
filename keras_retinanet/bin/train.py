@@ -19,11 +19,13 @@ limitations under the License.
 import argparse
 import os
 import sys
+sys.path.append('/home/yantao/workspace/projects/keras-retinanet')
 import warnings
 
 import keras
 import keras.preprocessing.image
 import tensorflow as tf
+import pdb
 
 # Allow relative imports when being executed as script.
 if __name__ == "__main__" and __package__ is None:
@@ -32,7 +34,7 @@ if __name__ == "__main__" and __package__ is None:
     __package__ = "keras_retinanet.bin"
 
 # Change these to absolute imports if you copy this script outside the keras_retinanet package.
-from .. import layers  # noqa: F401
+from keras_retinanet import layers  # noqa: F401
 from .. import losses
 from .. import models
 from ..callbacks import RedirectModel
@@ -280,6 +282,21 @@ def create_generators(args, preprocess_image):
             shuffle_groups=False,
             **common_args
         )
+    elif args.dataset_type == 'pascal_part':
+        train_generator = PascalVocGenerator(
+            args.pascal_path,
+            ['person_trainval', 'cat_trainval', 'chair_trainval', 'dog_trainval', 'sofa_trainval'],
+            transform_generator=transform_generator,
+            visual_effect_generator=visual_effect_generator,
+            **common_args
+        )
+
+        validation_generator = PascalVocGenerator(
+            args.pascal_path,
+            ['person_test', 'cat_test', 'chair_test', 'dog_test', 'sofa_test'],
+            shuffle_groups=False,
+            **common_args
+        )
     elif args.dataset_type == 'csv':
         train_generator = CSVGenerator(
             args.annotations,
@@ -386,6 +403,9 @@ def parse_args(args):
     pascal_parser = subparsers.add_parser('pascal')
     pascal_parser.add_argument('pascal_path', help='Path to dataset directory (ie. /tmp/VOCdevkit).')
 
+    pascal_part_parser = subparsers.add_parser('pascal_part')
+    pascal_part_parser.add_argument('pascal_path', help='Path to dataset directory (ie. /tmp/VOCdevkit).')
+
     kitti_parser = subparsers.add_parser('kitti')
     kitti_parser.add_argument('kitti_path', help='Path to dataset directory (ie. /tmp/kitti).')
 
@@ -416,7 +436,7 @@ def parse_args(args):
     parser.add_argument('--multi-gpu',        help='Number of GPUs to use for parallel processing.', type=int, default=0)
     parser.add_argument('--multi-gpu-force',  help='Extra flag needed to enable (experimental) multi-gpu support.', action='store_true')
     parser.add_argument('--epochs',           help='Number of epochs to train.', type=int, default=50)
-    parser.add_argument('--steps',            help='Number of steps per epoch.', type=int, default=10000)
+    #parser.add_argument('--steps',            help='Number of steps per epoch.', type=int, default=10000)
     parser.add_argument('--lr',               help='Learning rate.', type=float, default=1e-5)
     parser.add_argument('--snapshot-path',    help='Path to store snapshots of models during training (defaults to \'./snapshots\')', default='./snapshots')
     parser.add_argument('--tensorboard-dir',  help='Log directory for Tensorboard output', default='./logs')
@@ -439,6 +459,7 @@ def parse_args(args):
 
 
 def main(args=None):
+    
     # parse arguments
     if args is None:
         args = sys.argv[1:]
@@ -512,7 +533,7 @@ def main(args=None):
     # start training
     return training_model.fit_generator(
         generator=train_generator,
-        steps_per_epoch=args.steps,
+        #steps_per_epoch=args.steps,
         epochs=args.epochs,
         verbose=1,
         callbacks=callbacks,
