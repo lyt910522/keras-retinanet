@@ -43,7 +43,7 @@ from ..models.retinanet import retinanet_bbox
 from ..preprocessing.csv_generator import CSVGenerator
 from ..preprocessing.kitti import KittiGenerator
 from ..preprocessing.open_images import OpenImagesGenerator
-from ..preprocessing.pascal_voc import PascalVocGenerator
+from ..preprocessing.pascal_voc import PascalVocGenerator, PascalVocGenerator_part
 from ..utils.anchors import make_shapes_callback
 from ..utils.config import read_config_file, parse_anchor_parameters
 from ..utils.keras_version import check_keras_version
@@ -283,17 +283,21 @@ def create_generators(args, preprocess_image):
             **common_args
         )
     elif args.dataset_type == 'pascal_part':
-        train_generator = PascalVocGenerator(
+        train_generator = PascalVocGenerator_part(
             args.pascal_path,
-            ['person_trainval', 'cat_trainval', 'chair_trainval', 'dog_trainval', 'sofa_trainval'],
+            #['person_trainval', 'cat_trainval', 'chair_trainval', 'dog_trainval', 'sofa_trainval'],
+            #['person_trainval', 'chair_trainval'],
+            ['person_trainval'],
             transform_generator=transform_generator,
             visual_effect_generator=visual_effect_generator,
             **common_args
         )
 
-        validation_generator = PascalVocGenerator(
+        validation_generator = PascalVocGenerator_part(
             args.pascal_path,
-            ['person_test', 'cat_test', 'chair_test', 'dog_test', 'sofa_test'],
+            #['person_test', 'cat_test', 'chair_test', 'dog_test', 'sofa_test'],
+            #['person_test', 'chair_test'],
+            ['person_test'],
             shuffle_groups=False,
             **common_args
         )

@@ -52,12 +52,21 @@ voc_classes = {
     'tvmonitor'   : 19
 }
 
-voc_classes_sub = {
+voc_classes_sub5 = {
     'person'      : 0,
     'cat'         : 1,
     'chair'       : 2,
     'dog'         : 3,
     'sofa'        : 4
+}
+
+voc_classes_sub2 = {
+    'person'      : 0,
+    'chair'       : 1,
+}
+
+voc_classes_sub1 = {
+    'person'      : 0,
 }
 
 
@@ -76,7 +85,6 @@ def _findNode(parent, name, debug_name=None, parse=None):
     return result
 
 
-'''
 class PascalVocGenerator(Generator):
     """ Generate data for a Pascal VOC dataset.
 
@@ -208,11 +216,10 @@ class PascalVocGenerator(Generator):
             raise_from(ValueError('invalid annotations file: {}: {}'.format(filename, e)), None)
         except ValueError as e:
             raise_from(ValueError('invalid annotations file: {}: {}'.format(filename, e)), None)
-'''
 
 
 # change generator to load sub-dataset
-class PascalVocGenerator(Generator):
+class PascalVocGenerator_part(Generator):
     """ Generate data for a Pascal VOC dataset.
 
     See http://host.robots.ox.ac.uk/pascal/VOC/ for more information.
@@ -222,7 +229,7 @@ class PascalVocGenerator(Generator):
         self,
         data_dir,
         set_name_list,   # change to class name list
-        classes=voc_classes_sub,  # use sub-class dictionary
+        classes=voc_classes_sub1,  # use sub-class dictionary
         image_extension='.jpg',
         skip_truncated=False,
         skip_difficult=False,
@@ -246,7 +253,7 @@ class PascalVocGenerator(Generator):
         for key, value in self.classes.items():
             self.labels[value] = key
 
-        super(PascalVocGenerator, self).__init__(**kwargs)
+        super(PascalVocGenerator_part, self).__init__(**kwargs)
 
     def _get_image_names(self):
         image_names = []
